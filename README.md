@@ -249,10 +249,10 @@ The protocol can support compliance modes, such as providing **optional viewing 
 
 | Proof Type | Constraint Count | Generation Time | Verification Time | Gas Cost |
 |------------|------------------|-----------------|-------------------|----------|
-| MINT | ~50K | 2-3s | <100ms | ~250K |
-| ACTIVE_TRANSFER | ~80K | 3-4s | <100ms | ~300K |
-| FINALIZED_TRANSFER | ~100K | 4-5s | <100ms | ~350K |
-| ROLLOVER | ~120K | 5-6s | <100ms | ~400K |
+| MINT | ~20K | 1s | <100ms | ~250K |
+| ACTIVE_TRANSFER | ~30K | 2-3s | <100ms | ~300K |
+| FINALIZED_TRANSFER | ~50K | 3-4s | <100ms | ~350K |
+| ROLLOVER | ~50K | 3-4s | <100ms | ~350K |
 
 ### 9.3 PV1 Address Format
 
