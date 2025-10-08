@@ -236,13 +236,13 @@ The protocol can support compliance modes, such as providing **optional viewing 
 ### 9.1 Dual-Layer Merkle Tree Architecture
 
 **Subtree Layer**:
-- Height: 10 levels
-- Capacity: 1024 leaf nodes
+- Height: 16 levels
+- Capacity: 65536 leaf nodes
 - Purpose: Store recent notes with low-cost updates
 
 **Root Tree Layer**:
-- Height: 16 levels
-- Capacity: 65,536 subtrees
+- Height: 20 levels
+- Capacity: 1048576 subtrees
 - Purpose: Archive completed subtree roots
 
 ### 9.2 Proof System Performance
@@ -311,6 +311,23 @@ This protocol, through the ZRC-20 standard, pv1 multi-chain addresses, tiered Me
 - **Cross-chain Interoperability**: Seamless asset movement across networks
 
 We believe that privacy is a necessary condition for Web3 mass adoption. This protocol serves as the foundation stone for that future.
+
+
+---
+
+## 12. Community
+
+This document was designed by the **ZKProtocol** team.
+You can get the latest updates about the protocol and contact the team through the following channels:
+
+X (Twitter): https://x.com/0xzkprotocol
+
+Official Website: https://zkprotocol.xyz
+
+Email: 0x.zero.protocol@gmail.com
+
+GitHub: https://github.com/ZK-Protocol
+
 
 ---
 
