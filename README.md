@@ -104,6 +104,18 @@ interface IZRC20 {
         bytes[] calldata encryptedNotes
     ) external;
 
+    /**
+     * @notice Burns privacy tokens and returns the underlying ERC-20 assets.
+     * @param proofType The type of proof (0: Active, 1: Finalized, 2: Rollover).
+     * @param proof An ABI-encoded bytestring containing the zk-SNARK proof and all its public signals.
+     * @param recipient The address to receive the underlying ERC-20 tokens.
+     */
+    function burn(
+        uint8 proofType,
+        bytes calldata proof,
+        address recipient
+    ) external;
+
     /// @notice A new commitment has been appended to the Merkle tree.
     event CommitmentAppended(uint32 indexed subtreeIndex, bytes32 commitment, uint32 indexed leafIndex, uint256 timestamp);
 
@@ -137,6 +149,18 @@ interface IZRC20 {
   - Triggers `NullifierSpent` event (marking old notes as void)
   - Triggers `CommitmentAppended` event (generating new commitments)
   - Triggers `Transaction` event (only exposing a public hash for on-chain verification without revealing amounts and addresses)
+
+**burn**
+- Converts ZRC-20 privacy notes back to public ERC-20 tokens (unshielding)
+- Users provide zk-SNARK proof demonstrating:
+  - Ownership of input privacy notes
+  - Valid nullifiers (notes not previously spent)
+  - Correct amount calculation
+- Upon successful execution:
+  - Triggers `NullifierSpent` event (consuming privacy notes)
+  - Transfers underlying ERC-20 tokens to specified recipient address
+  - Allows users to exit privacy mode and return to public tokens
+- This bidirectional conversion (mint ↔ burn) enables flexible privacy management
 
 **Event Mechanism**
 - **CommitmentAppended**: Clients sync new privacy notes by monitoring this event
@@ -174,7 +198,13 @@ interface IZRC20 {
 - **Commitment**: Binds amount, key, randomness, serving as state tree leaves
 - **Nullifier**: Derived from note secrets, prevents double-spending
 - **Note Encryption**: Uses Baby Jubjub curve ECDH → AES-GCM encryption, ensuring security and efficiency
-- **Optional Disclosure**: Supports compliance through Viewing Key / Auditing Key
+- **Viewing Key**: Users can optionally share their encryption/signature keys with trusted parties (auditors, secondary devices, or compliance authorities) to enable:
+  - Decryption and viewing of received notes
+  - Balance calculation and transaction history monitoring
+  - Multi-device synchronization
+  - **Important**: Viewing Key holders can only observe transactions but **cannot spend funds** (spending requires the spend private key, which remains secure)
+  - This separation of viewing and spending capabilities enables compliance scenarios while maintaining fund security
+- **Auditing Key**: Extended viewing permissions that may include additional metadata for regulatory compliance purposes
 
 ---
 
