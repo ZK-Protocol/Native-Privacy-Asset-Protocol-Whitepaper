@@ -218,15 +218,21 @@ This model ensures sustainable protocol development while incentivizing develope
 
 ## 7. Compliance and Regulatory Considerations
 
+**Technical Differences from Mixing Protocols**:
+
 | Aspect | Mixing Protocols | Native Privacy Assets |
 |--------|------------------|----------------------|
 | Asset Source | Existing tokens | Native creation |
-| Privacy Acquisition | Post-hoc mixing | Inherent property |
-| Money Laundering Risk | High | Low |
-| Regulatory Classification | High-risk tool | New asset category |
-| Compliance Path | Difficult | Feasible |
+| Privacy Mechanism | Post-hoc mixing | Built-in from genesis |
+| Technical Architecture | Pool-based anonymity set | Independent token contracts |
 
-The protocol can support compliance modes, such as providing **optional viewing keys** for regulatory purposes.
+**Compliance Approach**:
+
+The protocol introduces a new paradigm distinct from traditional mixing services. Regulatory treatment remains an evolving question subject to legal frameworks in different jurisdictions.
+
+**Optional Viewing Keys**: The protocol supports viewing keys that allow users to grant read-only access to their transaction history and balances to authorized parties (such as auditors or regulatory bodies) while retaining full control over spending.
+
+**Important Disclaimer**: This protocol does not claim to solve regulatory challenges. Compliance requirements vary by jurisdiction, and users/developers must consult legal counsel before deployment or use.
 
 ---
 
@@ -372,17 +378,19 @@ pv1[N][T][CompressedData][Checksum]
 - **CompressedData**: Compressed elliptic curve public key data
 - **Checksum**: 4-character FNV-1a checksum
 
-**Compression Ratio**: 35% size reduction compared to traditional formats
+The format uses elliptic curve point compression to minimize address length while maintaining security.
 
 ### 9.4 Multi-Chain Support
 
-| Network | Code | Status | Primary Use |
-|---------|------|--------|-------------|
-| Ethereum | M | Active | Mainnet deployment |
-| Polygon | P | Active | Low-cost transactions |
-| Arbitrum | A | Planned | L2 scaling |
-| Base | B | Planned | Coinbase ecosystem |
-| Reserved Slots | - | 54 slots | Future expansion |
+The protocol is designed to support multiple EVM-compatible chains through the PV1 address format:
+
+| Network | Code | Primary Use |
+|---------|------|-------------|
+| Ethereum | M | Mainnet deployment |
+| Polygon | P | Low-cost transactions |
+| Arbitrum | A | L2 scaling |
+| Base | B | Coinbase ecosystem |
+| Other EVM Chains | - | 54 additional network codes reserved for future expansion |
 
 ---
 
