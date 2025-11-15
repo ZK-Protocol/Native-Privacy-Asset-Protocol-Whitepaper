@@ -188,31 +188,35 @@ interface IZRC20 {
 
 ## 5. Economic Model
 
-**Creation Fee**: Creators pay a small fee to publish their own native privacy tokens. This prevents too many users from creating unused tokens and avoids bot activity.
+The protocol can adopt various economic models depending on deployment scenarios. A reference model includes:
 
-**Minting Fee**: Any user can issue their own native privacy tokens. Initiators can set minting fees, requiring users to pay certain fees to participate in fair minting. The platform collects 2.5% protocol fees to maintain long-term protocol development.
+**Token Creation Fee**: A nominal fee to deploy new ZRC-20 tokens through the factory contract, designed to prevent spam deployments while keeping the barrier to entry low.
 
-**Transaction Gas Costs**: Users pay regular transaction fees on-chain.
+**Minting Fee (Optional)**: Token creators may optionally configure minting fees for their specific tokens. In fair launch scenarios, a small protocol fee (e.g., 2.5%, configurable) could support ongoing protocol development and maintenance.
 
-This model ensures sustainable protocol development while incentivizing developers and community.
+*Note: Specific fee structures and percentages are reference values and can be adjusted based on governance decisions or deployment requirements.*
 
 ---
 
 ## 6. Application Scenarios
 
-**DAO Governance**: Anonymous voting, preventing collusion and opinion pressure.
+The protocol provides a foundation for privacy-preserving applications. Potential use cases include:
+
+**DAO Governance**: Enable anonymous voting mechanisms that prevent collusion and opinion pressure while maintaining verifiable vote integrity.
 
 **Privacy DeFi**:
-- Privacy DEX (trading amounts and strategies hidden)
-- Anonymous lending (collateral and lending behavior confidential)
-- Shielded Yield Farming (hiding returns and positions)
+- Privacy-preserving DEXs where trading amounts and strategies remain confidential
+- Anonymous lending protocols with private collateral and borrowing positions
+- Shielded yield farming to protect investment strategies and returns
 
-**Enterprise Payments and Supply Chain Finance**: On-chain settlement while protecting trade secrets.
+**Enterprise Payments and Supply Chain Finance**: Facilitate on-chain settlement for businesses while protecting sensitive commercial information and trade secrets.
 
 **Gaming and Metaverse**:
-- Protect player asset privacy
-- Avoid wealth disparity affecting competition
-- Cross-game asset privacy circulation
+- Protect player asset holdings and transaction history
+- Reduce wealth-based advantages in competitive gaming
+- Enable cross-game asset transfers with privacy preservation
+
+*Note: These scenarios represent potential applications enabled by the protocol's privacy primitives. Actual implementations require additional development and may face regulatory considerations in specific jurisdictions.*
 
 ---
 
