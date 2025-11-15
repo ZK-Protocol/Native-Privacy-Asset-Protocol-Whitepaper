@@ -61,7 +61,7 @@ The protocol uses a dual-layer tree structure:
 **Three Transaction Modes**:
 
 - **Active Transfer**: Intra-active tree transactions, lowest cost
-- **Finalized Transfer**: Historical tree transactions, supports parallel processing
+- **Finalized Transfer**: Historical tree transactions
 - **Rollover Transfer**: Used when triggering subtree rollover
 
 ---
@@ -104,17 +104,6 @@ interface IZRC20 {
         bytes[] calldata encryptedNotes
     ) external;
 
-    /**
-     * @notice Burns privacy tokens and returns the underlying ERC-20 assets.
-     * @param proofType The type of proof (0: Active, 1: Finalized, 2: Rollover).
-     * @param proof An ABI-encoded bytestring containing the zk-SNARK proof and all its public signals.
-     * @param recipient The address to receive the underlying ERC-20 tokens.
-     */
-    function burn(
-        uint8 proofType,
-        bytes calldata proof,
-        address recipient
-    ) external;
 
     /// @notice A new commitment has been appended to the Merkle tree.
     event CommitmentAppended(uint32 indexed subtreeIndex, bytes32 commitment, uint32 indexed leafIndex, uint256 timestamp);
@@ -135,7 +124,7 @@ interface IZRC20 {
 ### 3.3 Functionality Description
 
 **mint**
-- Converts public assets (like ERC-20) into ZRC-20 privacy notes
+- Converts public assets (like ERC-20) into ZRC-20 privacy notes / Mints new privacy tokens
 - Input is zero-knowledge proof (proving user paid assets and generated new commitments)
 - Triggers `CommitmentAppended` event upon success
 
@@ -150,17 +139,6 @@ interface IZRC20 {
   - Triggers `CommitmentAppended` event (generating new commitments)
   - Triggers `Transaction` event (only exposing a public hash for on-chain verification without revealing amounts and addresses)
 
-**burn**
-- Converts ZRC-20 privacy notes back to public ERC-20 tokens (unshielding)
-- Users provide zk-SNARK proof demonstrating:
-  - Ownership of input privacy notes
-  - Valid nullifiers (notes not previously spent)
-  - Correct amount calculation
-- Upon successful execution:
-  - Triggers `NullifierSpent` event (consuming privacy notes)
-  - Transfers underlying ERC-20 tokens to specified recipient address
-  - Allows users to exit privacy mode and return to public tokens
-- This bidirectional conversion (mint ↔ burn) enables flexible privacy management
 
 **Event Mechanism**
 - **CommitmentAppended**: Clients sync new privacy notes by monitoring this event
@@ -257,8 +235,7 @@ The protocol can support compliance modes, such as providing **optional viewing 
 - **60% reduction in Gas costs** Achieves up to 60% reduction in gas costs compared to traditional L1 privacy solutions that require full Merkle tree updates on-chain.
 - **40% reduction in client resources** The viewTag system and tiered tree structure can lead to a 40% reduction in client-side computation and storage compared to scanning every transaction in a single, monolithic tree.
 - **50% reduction in network bandwidth**
-- **Parallel Finalized Transfers** In L2 environments or under ideal batching conditions for Finalized Transfers, the protocol's theoretical throughput can reach hundreds of transactions per second (TPS).
-
+- **Parallel Finalized Transfers** In L2 environments or under ideal batching conditions for Finalized Transfers
 ---
 
 ## 9. Technical Specifications
@@ -279,10 +256,10 @@ The protocol can support compliance modes, such as providing **optional viewing 
 
 | Proof Type | Constraint Count | Generation Time | Verification Time | Gas Cost |
 |------------|------------------|-----------------|-------------------|----------|
-| MINT | ~20K | 1s | <100ms | ~250K |
-| ACTIVE_TRANSFER | ~30K | 2-3s | <100ms | ~300K |
-| FINALIZED_TRANSFER | ~50K | 3-4s | <100ms | ~350K |
-| ROLLOVER | ~50K | 3-4s | <100ms | ~350K |
+| MINT | ~20K | 1s | <100ms | ~350K |
+| ACTIVE_TRANSFER | ~30K | 2-3s | <100ms | ~400K |
+| FINALIZED_TRANSFER | ~50K | 3-4s | <100ms | ~450K |
+| ROLLOVER | ~50K | 3-4s | <100ms | ~400K |
 
 ### 9.3 PV1 Address Format
 
