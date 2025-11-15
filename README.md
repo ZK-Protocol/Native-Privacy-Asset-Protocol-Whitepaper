@@ -124,7 +124,7 @@ interface IZRC20 {
 ### 3.3 Functionality Description
 
 **mint**
-- Converts public assets (like ERC-20) into ZRC-20 privacy notes / Mints new privacy tokens
+- Mints new privacy tokens
 - Input is zero-knowledge proof (proving user paid assets and generated new commitments)
 - Triggers `CommitmentAppended` event upon success
 
