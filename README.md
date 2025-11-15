@@ -232,10 +232,109 @@ The protocol can support compliance modes, such as providing **optional viewing 
 
 ## 8. Performance and Scalability
 
-- **60% reduction in Gas costs** Achieves up to 60% reduction in gas costs compared to traditional L1 privacy solutions that require full Merkle tree updates on-chain.
-- **40% reduction in client resources** The viewTag system and tiered tree structure can lead to a 40% reduction in client-side computation and storage compared to scanning every transaction in a single, monolithic tree.
-- **50% reduction in network bandwidth**
-- **Parallel Finalized Transfers** In L2 environments or under ideal batching conditions for Finalized Transfers
+The dual-layer Merkle tree architecture provides fundamental performance advantages over traditional single-tree designs. The key benefits are:
+
+1. **Proof generation speed**: 2-3x faster for active transactions (smaller Merkle proofs)
+2. **Client efficiency**: Reduced scanning and storage requirements
+3. **Massive capacity**: Decades to centuries of capacity with practical proof sizes
+4. **Flexible architecture**: Better state management through active/historical partitioning
+
+Note: On-chain gas costs remain similar to single-tree designs (~300-400K per transaction), as both architectures perform Merkle verification within zk-SNARK circuits.
+
+### 8.1 Capacity Advantage
+
+**Architectural Comparison**
+
+Taking a practical example: a dual-layer tree with subtree height H₁ and root tree height H₂ provides equivalent capacity to a single tree of height (H₁ + H₂), but with fundamentally different performance characteristics.
+
+For instance, using **16-level subtrees** and a **20-level root tree** (as a reference design):
+- **Total capacity**: 2¹⁶ × 2²⁰ = **68.7 billion notes**
+- **Equivalent single tree**: Would require **36 levels** to match this capacity
+- **Active transaction proof**: Only requires **16-level Merkle proof** (vs. 36 levels in single tree)
+- **Proof complexity reduction**: **~55% fewer hash verifications** for most transactions
+
+**Key Insight**: The dual-layer design delivers massive capacity while keeping the most common operations (Active Transfers) efficient by limiting them to the smaller subtree height.
+
+**Longevity Example** (assuming 16×20 configuration):
+- At moderate usage (10 transactions/second): Capacity lasts over **200 years**
+- At high frequency (100 TPS): Capacity sufficient for **decades** of operation
+- System design ensures long-term viability without architectural changes
+
+*Note: Actual subtree and root tree heights are configurable parameters that can be optimized for specific deployment scenarios.*
+
+### 8.2 Computational Efficiency
+
+**Proof Generation Performance**
+
+The dual-layer structure directly reduces zero-knowledge proof complexity:
+
+| Operation | Dual-Layer (Active) | Dual-Layer (Finalized) | Single Tree |
+|-----------|---------------------|------------------------|-------------|
+| Merkle Proof Depth | H₁ (e.g., 16) | H₁ + H₂ (e.g., 36) | H₁ + H₂ (e.g., 36) |
+| Circuit Constraints | ~H₁ × C | ~(H₁ + H₂) × C | ~(H₁ + H₂) × C |
+| Relative Speed | **~2-3x faster** | Baseline | Baseline |
+
+*Where C = constraints per hash operation (typically 300-500 for Poseidon hash)*
+
+**Client-Side Benefits**:
+- **Reduced scanning**: New users only need to scan active subtree, not entire history
+- **ViewTag filtering**: ~99.6% of irrelevant transactions pre-filtered (255/256 ratio)
+- **Storage optimization**: Clients can prune finalized subtrees while maintaining verification capability
+
+### 8.3 On-Chain Cost Analysis
+
+**Gas Cost Composition**
+
+The majority of on-chain gas costs come from zk-SNARK proof verification, which is similar across architectures:
+
+| Cost Component | Estimated Gas | Notes |
+|----------------|--------------|-------|
+| zk-SNARK proof verification | ~250-300K | Dominant cost, similar for both architectures |
+| Nullifier storage & checking | ~20-40K | Prevent double-spending |
+| Commitment events | ~20-30K | Event emission for client sync |
+| Calldata (encrypted notes, proofs) | ~30-50K | Variable by transaction type |
+
+**Total per transaction**: Approximately **300-400K gas** for both single-tree and dual-layer architectures.
+
+**Key Insight**: The dual-layer design does not significantly reduce on-chain gas costs compared to single-tree implementations, as both store only root hashes on-chain and perform Merkle proof verification within zk-SNARK circuits. The primary cost (proof verification) remains similar.
+
+**Where Dual-Layer Provides Value**:
+- **Not in gas costs**, but in proof generation speed and client efficiency (see sections 8.2 and 8.4)
+- Architecture enables better state management (active vs. historical partitioning)
+- Potential for optimized batching strategies in future versions
+
+### 8.4 Scalability Properties
+
+**Horizontal Scalability**:
+- Each ZRC-20 token maintains independent dual-layer trees
+- Unlimited parallel token deployments through factory model
+- No cross-token state dependencies
+
+**Vertical Scalability**:
+- Subtree/root tree height ratios can be tuned for different use cases
+- Compatible with L2 rollups for further cost reduction
+- Protocol throughput inherits from the underlying blockchain (L1/L2) performance characteristics
+
+### 8.5 Client Synchronization Efficiency
+
+The dual-layer architecture optimizes client-side operations:
+
+**For New Users**:
+- Only need to scan the active subtree (~2¹⁶ notes in reference design)
+- ViewTag filtering reduces decryption attempts by ~255/256
+- Significantly faster initial sync compared to scanning full transaction history
+
+**For Existing Users**:
+- Incremental sync: Only fetch new commitments in active subtree
+- Can optionally prune old finalized subtrees if not needed
+- Maintain verification capability with minimal storage
+
+**Bandwidth Considerations**:
+- zk-SNARK proofs dominate transaction size (~200-300 bytes)
+- Encrypted notes add ~100-200 bytes per output
+- Merkle proof size difference (H₁ vs H₁+H₂) has marginal impact on total bandwidth
+- Main bandwidth benefit comes from ViewTag filtering, not proof size reduction
+
 ---
 
 ## 9. Technical Specifications
