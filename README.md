@@ -295,14 +295,14 @@ The dual-layer structure directly reduces zero-knowledge proof complexity:
 
 **Gas Cost Composition**
 
-The majority of on-chain gas costs come from zk-SNARK proof verification, which is similar across architectures:
+On-chain gas costs are dominated by zk-SNARK proof verification, with minor contributions from state updates and data availability:
 
-| Cost Component | Estimated Gas | Notes |
-|----------------|--------------|-------|
-| zk-SNARK proof verification | ~250-300K | Dominant cost, similar for both architectures |
-| Nullifier storage & checking | ~20-40K | Prevent double-spending |
-| Commitment events | ~20-30K | Event emission for client sync |
-| Calldata (encrypted notes, proofs) | ~30-50K | Variable by transaction type |
+| Cost Component | Proportion | Notes |
+|----------------|-----------|-------|
+| zk-SNARK proof verification | **~80-85%** | Dominant cost, similar for both architectures |
+| Nullifier storage & checking | ~7-10% | Prevent double-spending via on-chain nullifier set |
+| Event emission & calldata | ~5-8% | Transaction metadata and encrypted note data |
+| Other operations | ~2-5% | Tree root updates, input validation |
 
 **Total per transaction**: Approximately **300-400K gas** for both single-tree and dual-layer architectures.
 
