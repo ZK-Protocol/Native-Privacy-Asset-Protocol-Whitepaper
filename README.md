@@ -8,11 +8,15 @@
 
 ## Abstract
 
-This protocol is an open-source, permissionless infrastructure based on zero-knowledge proofs (zk-SNARKs), designed for Ethereum and its compatible multi-chain ecosystem to provide native privacy asset issuance and trading capabilities. Unlike traditional mixing protocols, native privacy assets possess privacy attributes from their inception, allowing anyone to issue and use them as easily as ERC-20 tokens.
+This protocol is an open-source, permissionless infrastructure based on zero-knowledge proofs (zk-SNARKs), designed for Ethereum and its compatible multi-chain ecosystem to provide **native privacy asset** issuance and trading capabilities. Unlike traditional mixing protocols, native privacy assets possess privacy attributes from their inception, allowing anyone to issue and use them as easily as ERC-20 tokens.
 
 The protocol introduces the **ZRC-20 standard** and **factory model**, supporting fair launch and composability. Through innovative **tiered/dual-layer Merkle tree architecture**, efficient **zk-SNARK proof systems**, and forward-looking **pv1 multi-chain privacy address format**, it achieves a balance between performance, scalability, and compliance.
 
-This protocol aims to become the privacy infrastructure layer for the Ethereum ecosystem, unlocking unprecedented possibilities for DeFi, DAOs, enterprise payments, and metaverse applications.
+**Beyond native privacy assets**, ZRC-20's standardized interface unlocks additional ecosystem value:
+- **Wrapper Protocols**: Adding privacy to existing ERC-20 tokens (DAI → zDAI → DAI)
+- **Dual-Mode Tokens**: New tokens with both public (ERC-20) and private (ZRC-20) modes
+
+This means the protocol not only enables native privacy asset creation, but also serves as the foundation that brings privacy capabilities to the entire existing ERC-20 ecosystem—unlocking unprecedented possibilities for DeFi, DAOs, enterprise payments, and metaverse applications.
 
 ---
 
@@ -33,6 +37,35 @@ The transparency of public blockchains brings security and auditability to the s
 ### 1.3 The Value of Native Privacy Assets
 
 This protocol proposes the concept of **Native Privacy Assets**: privacy is an inherent property of the asset, not a result of post-hoc mixing. This not only enhances the simplicity of technical implementation but also creates new possibilities for legal compliance.
+
+### 1.4 Extended Value: Ecosystem Integration
+
+Beyond enabling native privacy assets, this protocol provides additional value through ecosystem integration. A critical insight is that **privacy needs standardization**—without a common interface, each privacy implementation reinvents commitments, nullifiers, and note encryption, leading to ecosystem fragmentation.
+
+ZRC-20's standardized interface positions it as a **foundational privacy primitive** that can serve the broader ecosystem:
+
+```
+Ecosystem Stack:
+┌─────────────────────────────────────┐
+│  Applications (DeFi, DAO, Gaming)   │
+├─────────────────────────────────────┤
+│  Dual-Mode Tokens (ERC-20 + ZRC-20) │  ← Future privacy-native tokens
+│  Wrapper Protocols (ERC-20→ZRC-20)  │  ← Privacy for existing tokens
+├─────────────────────────────────────┤
+│  ZRC-20: Native Privacy Interface   │  ← This protocol (foundation)
+├─────────────────────────────────────┤
+│  Ethereum L1 / L2s                  │
+└─────────────────────────────────────┘
+```
+
+**Why This Architecture Matters**:
+
+1. **Connects to Existing Ecosystem**: Through Wrapper Protocols, the entire ERC-20 ecosystem (DAI, USDC, WETH, etc.) can gain privacy capabilities without migration
+2. **Enables Privacy-Native Future**: Dual-Mode Tokens allow new projects to offer both transparent and private modes in a single contract
+3. **Accelerates Ecosystem Development**: Standardized interface means:
+   - Wallets support all privacy tokens without custom integration
+   - Security audits focus on business logic, not reinventing privacy primitives
+   - Developers build on proven foundations
 
 ---
 
@@ -72,7 +105,20 @@ The protocol uses a dual-layer tree structure:
 
 ZRC-20 (ZK Privacy ERC-20) is a native privacy token standard built on zero-knowledge proofs. While maintaining ERC-20-like interface semantics for developer experience, it is completely based on commitments, nullifiers, and zero-knowledge proofs at the implementation level, ensuring privacy of transaction amounts and account balances.
 
-ZRC-20's goal is to enable anyone to issue privacy tokens as easily as ERC-20 tokens, while maintaining composability and embedding anti-double-spending and transaction confidentiality mechanisms.
+**Why Standardization Matters**:
+
+Without a common interface, each privacy implementation reinvents commitments, nullifiers, and note encryption, leading to:
+- Ecosystem fragmentation
+- Duplicated security audit effort
+- Incompatible wallet integrations
+- Slower ecosystem development
+
+ZRC-20 serves as the **foundational privacy primitive** that enables:
+- **Wrapper Protocols**: Implement this interface to add privacy to existing ERC-20 tokens
+- **Dual-Mode Tokens**: Combine standards via `contract DMT is ERC20, IZRC20`
+- **Privacy Applications**: Build on a proven, audited foundation
+
+By unifying the native privacy token interface, ZRC-20 accelerates Ethereum's privacy ecosystem growth while enabling anyone to issue privacy tokens as easily as ERC-20 tokens.
 
 ### 3.2 Interface Specification
 
@@ -171,7 +217,96 @@ interface IZRC20 {
 
 ---
 
-## 4. Encryption and Security Model
+## 4. Ecosystem Integration: Wrapper and Dual-Mode Protocols
+
+The true power of ZRC-20 emerges when viewed as infrastructure for the broader Ethereum ecosystem. This section details how ZRC-20 enables privacy for both existing and future tokens.
+
+### 4.1 Wrapper Protocols: Privacy for Existing ERC-20 Tokens
+
+Wrapper protocols bridge existing ERC-20 tokens to the privacy layer, enabling users to transact with established assets (DAI, USDC, WETH) privately.
+
+**Architecture Pattern**:
+```
+┌─────────────┐      ┌─────────────────┐      ┌─────────────┐
+│   DAI       │ ───► │  Wrapper        │ ───► │   zDAI      │
+│  (ERC-20)   │      │  Contract       │      │  (ZRC-20)   │
+│  Public     │ ◄─── │  deposit()      │ ◄─── │  Private    │
+└─────────────┘      │  withdraw()     │      └─────────────┘
+                     └─────────────────┘
+```
+
+**Operational Flow**:
+
+1. **Deposit (ERC-20 → ZRC-20)**:
+   - User deposits DAI into wrapper contract
+   - Wrapper mints equivalent zDAI using `ZRC20.mint()`
+   - User receives privacy commitments
+
+2. **Private Transfer**:
+   - User transfers zDAI privately using `ZRC20.transfer()`
+   - Amounts, sender, recipient all remain confidential
+
+3. **Withdraw (ZRC-20 → ERC-20)**:
+   - User provides proof of ownership
+   - Wrapper burns zDAI and releases DAI
+
+**Benefits of Standardization**:
+- All wrapper protocols use the same ZRC-20 interface
+- Wallets support all wrappers without custom integration
+- Security audits focus on wrapper logic, not reinventing privacy primitives
+
+### 4.2 Dual-Mode Tokens: Native Privacy for New Projects
+
+Dual-Mode Tokens combine ERC-20 and ZRC-20 in a single contract, allowing users to seamlessly switch between public and private modes.
+
+**Architecture Pattern**:
+```solidity
+contract DualModeToken is ERC20, IZRC20 {
+    // Inherits both standards
+
+    // Mode conversion functions
+    function toPrivacy(uint256 amount, bytes proof) external;
+    function toPublic(bytes proof) external;
+}
+```
+
+**Use Case Examples**:
+
+| Mode | Scenario | Benefit |
+|------|----------|---------|
+| Public | DeFi interactions, DEX trading | Full composability with existing DeFi |
+| Private | Salary payments, personal transfers | Transaction privacy |
+| Conversion | Switch as needed | Flexibility for different use cases |
+
+**Value Proposition**:
+- **For Users**: Choose privacy level per transaction
+- **For Projects**: Single token serves both transparent and private use cases
+- **For Ecosystem**: Gradual privacy adoption without breaking existing integrations
+
+### 4.3 Ecosystem Development Acceleration
+
+By standardizing the privacy interface, this protocol accelerates ecosystem growth:
+
+**Before Standardization**:
+- Each privacy project reinvents commitments, nullifiers, encryption
+- Wallets need custom integration for each project
+- Security audits must cover entire cryptographic stack
+- Limited interoperability between privacy solutions
+
+**After Standardization**:
+- Privacy layer uses unified ZRC-20 interface
+- Wallets support all implementations automatically
+- Audits focus on business logic
+- Interoperable privacy ecosystem
+
+**Expected Ecosystem Growth**:
+1. **Phase 1**: Wrapper protocols for major ERC-20 tokens (stablecoins, wrapped ETH)
+2. **Phase 2**: Dual-mode tokens for new DeFi projects
+3. **Phase 3**: Privacy-aware DeFi protocols building on standard primitives
+
+---
+
+## 5. Encryption and Security Model
 
 - **Commitment**: Binds amount, key, randomness, serving as state tree leaves
 - **Nullifier**: Derived from note secrets, prevents double-spending
@@ -198,7 +333,7 @@ The protocol can adopt various economic models depending on deployment scenarios
 
 ---
 
-## 6. Application Scenarios
+## 7. Application Scenarios
 
 The protocol provides a foundation for privacy-preserving applications. Potential use cases include:
 
@@ -220,7 +355,7 @@ The protocol provides a foundation for privacy-preserving applications. Potentia
 
 ---
 
-## 7. Compliance and Regulatory Considerations
+## 8. Compliance and Regulatory Considerations
 
 **Technical Differences from Mixing Protocols**:
 
@@ -240,7 +375,7 @@ The protocol introduces a new paradigm distinct from traditional mixing services
 
 ---
 
-## 8. Performance and Scalability
+## 9. Performance and Scalability
 
 The dual-layer Merkle tree architecture provides fundamental performance advantages over traditional single-tree designs. The key benefits are:
 
@@ -251,7 +386,7 @@ The dual-layer Merkle tree architecture provides fundamental performance advanta
 
 Note: On-chain gas costs remain similar to single-tree designs (~300-400K per transaction), as both architectures perform Merkle verification within zk-SNARK circuits.
 
-### 8.1 Capacity Advantage
+### 9.1 Capacity Advantage
 
 **Architectural Comparison**
 
@@ -272,7 +407,7 @@ For instance, using **16-level subtrees** and a **20-level root tree** (as a ref
 
 *Note: Actual subtree and root tree heights are configurable parameters that can be optimized for specific deployment scenarios.*
 
-### 8.2 Computational Efficiency
+### 9.2 Computational Efficiency
 
 **Proof Generation Performance**
 
@@ -291,7 +426,7 @@ The dual-layer structure directly reduces zero-knowledge proof complexity:
 - **ViewTag filtering**: ~99.6% of irrelevant transactions pre-filtered (255/256 ratio)
 - **Storage optimization**: Clients can prune finalized subtrees while maintaining verification capability
 
-### 8.3 On-Chain Cost Analysis
+### 9.3 On-Chain Cost Analysis
 
 **Gas Cost Composition**
 
@@ -313,7 +448,7 @@ On-chain gas costs are dominated by zk-SNARK proof verification, with minor cont
 - Architecture enables better state management (active vs. historical partitioning)
 - Potential for optimized batching strategies in future versions
 
-### 8.4 Scalability Properties
+### 9.4 Scalability Properties
 
 **Horizontal Scalability**:
 - Each ZRC-20 token maintains independent dual-layer trees
@@ -325,7 +460,7 @@ On-chain gas costs are dominated by zk-SNARK proof verification, with minor cont
 - Compatible with L2 rollups for further cost reduction
 - Protocol throughput inherits from the underlying blockchain (L1/L2) performance characteristics
 
-### 8.5 Client Synchronization Efficiency
+### 9.5 Client Synchronization Efficiency
 
 The dual-layer architecture optimizes client-side operations:
 
@@ -347,9 +482,9 @@ The dual-layer architecture optimizes client-side operations:
 
 ---
 
-## 9. Technical Specifications
+## 10. Technical Specifications
 
-### 9.1 Dual-Layer Merkle Tree Architecture
+### 10.1 Dual-Layer Merkle Tree Architecture
 
 **Subtree Layer**:
 - Height: 16 levels
@@ -361,7 +496,7 @@ The dual-layer architecture optimizes client-side operations:
 - Capacity: 1048576 subtrees
 - Purpose: Archive completed subtree roots
 
-### 9.2 Proof System Performance
+### 10.2 Proof System Performance
 
 | Proof Type | Constraint Count | Generation Time | Verification Time | Gas Cost |
 |------------|------------------|-----------------|-------------------|----------|
@@ -370,7 +505,7 @@ The dual-layer architecture optimizes client-side operations:
 | FINALIZED_TRANSFER | ~50K | 3-4s | <100ms | ~450K |
 | ROLLOVER | ~50K | 3-4s | <100ms | ~400K |
 
-### 9.3 PV1 Address Format
+### 10.3 PV1 Address Format
 
 ```
 pv1[N][T][CompressedData][Checksum]
@@ -384,7 +519,7 @@ pv1[N][T][CompressedData][Checksum]
 
 The format uses elliptic curve point compression to minimize address length while maintaining security.
 
-### 9.4 Multi-Chain Support
+### 10.4 Multi-Chain Support
 
 The protocol is designed to support multiple EVM-compatible chains through the PV1 address format:
 
@@ -398,16 +533,16 @@ The protocol is designed to support multiple EVM-compatible chains through the P
 
 ---
 
-## 10. Security Analysis
+## 11. Security Analysis
 
-### 10.1 Cryptographic Security
+### 11.1 Cryptographic Security
 
 - **Elliptic Curve**: Baby Jubjub curve compatible with zk-SNARK systems
 - **Hash Function**: Poseidon hash optimized for zero-knowledge proofs
 - **Encryption**: ECDH key exchange + AES-GCM authenticated encryption
 - **Randomness**: Cryptographically secure random number generation
 
-### 10.2 Protocol Security
+### 11.2 Protocol Security
 
 - **Double-spending Prevention**: Nullifier uniqueness enforced by smart contracts
 - **Replay Protection**: Each proof is cryptographically bound to specific inputs
@@ -417,23 +552,32 @@ The protocol is designed to support multiple EVM-compatible chains through the P
 
 ---
 
-## 11. Conclusion and Vision
+## 12. Conclusion and Vision
 
-This protocol, through the ZRC-20 standard, pv1 multi-chain addresses, tiered Merkle trees, and efficient zk-SNARK proofs, constructs a native privacy asset layer for the Ethereum ecosystem. It represents not only technical innovation but a paradigm shift in the market: making privacy a fundamental attribute of any digital asset.
+This protocol, through the ZRC-20 standard, pv1 multi-chain addresses, tiered Merkle trees, and efficient zk-SNARK proofs, constructs a **native privacy asset layer** for the Ethereum ecosystem. It represents not only technical innovation but a paradigm shift in the market: making privacy a fundamental attribute of any digital asset.
+
+**Core Value**: Native privacy assets with privacy as an inherent property from genesis—not achieved through post-hoc mixing. Anyone can issue and use privacy tokens as easily as ERC-20 tokens.
+
+**Extended Value**: Beyond native privacy assets, ZRC-20's standardized interface enables broader ecosystem integration:
+
+1. **Connects to Existing Ecosystem**: Through Wrapper Protocols, the entire ERC-20 ecosystem (DAI, USDC, WETH) can gain privacy capabilities without migration
+2. **Enables Privacy-Native Future**: Dual-Mode Tokens allow new projects to offer both public (DeFi-compatible) and private modes in a single contract
+3. **Accelerates Ecosystem Development**: Standardized interface means wallets, auditors, and developers can build on proven foundations
 
 **Future directions include**:
 
+- **Wrapper Protocol Ecosystem**: Privacy wrappers for major stablecoins and DeFi tokens
+- **Dual-Mode Token Framework**: Standard implementations for privacy-native projects
 - **L2 Rollup Integration**: Further cost reduction through Layer 2 solutions
-- **Privacy Smart Contract Support**: Extension to general-purpose applications  
-- **Compliance Mode Adoption**: Enabling enterprise-level adoption
-- **Cross-chain Interoperability**: Seamless asset movement across networks
+- **Privacy DeFi Primitives**: DEXs, lending protocols, and yield farming with native privacy
+- **Cross-chain Interoperability**: Seamless privacy-preserving asset movement across networks
 
-We believe that privacy is a necessary condition for Web3 mass adoption. This protocol serves as the foundation stone for that future.
+We believe that privacy is a necessary condition for Web3 mass adoption. This protocol serves as the foundation stone for that future—not as an isolated privacy solution, but as the **standard interface that unlocks privacy for the entire Ethereum ecosystem**.
 
 
 ---
 
-## 12. Community
+## 13. Community
 
 This document was designed by the **ZKProtocol** team.
 You can get the latest updates about the protocol and contact the team through the following channels:
