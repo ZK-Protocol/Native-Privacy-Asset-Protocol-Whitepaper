@@ -508,12 +508,11 @@ The dual-layer architecture optimizes client-side operations:
 ### 10.3 PV1 Address Format
 
 ```
-pv1[N][T][CompressedData][Checksum]
+pv1[N][CompressedData][Checksum]
 ```
 
 - **pv1**: Protocol version identifier
 - **N**: Network code (supports 58 networks)
-- **T**: Address type (Standard/Disposable/Social/Temporary)
 - **CompressedData**: Compressed elliptic curve public key data
 - **Checksum**: 4-character FNV-1a checksum
 
