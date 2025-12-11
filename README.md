@@ -10,7 +10,7 @@
 
 This protocol is an open-source, permissionless infrastructure based on zero-knowledge proofs (zk-SNARKs), designed for Ethereum and its compatible multi-chain ecosystem to provide **native privacy asset** issuance and trading capabilities. Unlike traditional mixing protocols, native privacy assets possess privacy attributes from their inception, allowing anyone to issue and use them as easily as ERC-20 tokens.
 
-The protocol introduces the **ZRC-20 standard** and **factory model**, supporting fair launch and composability. Through innovative **tiered/dual-layer Merkle tree architecture**, efficient **zk-SNARK proof systems**, and forward-looking **pv1 multi-chain privacy address format**, it achieves a balance between performance, scalability, and compliance.
+The protocol introduces the **ZRC-20 standard**, providing a **permissionless foundation** for privacy token implementations with full composability. Through innovative **tiered/dual-layer Merkle tree architecture**, efficient **zk-SNARK proof systems**, and forward-looking **pv1 multi-chain privacy address format**, it achieves a balance between performance, scalability, and compliance.
 
 **Beyond native privacy assets**, ZRC-20's standardized interface unlocks additional ecosystem value:
 - **Wrapper Protocols**: Adding privacy to existing ERC-20 tokens (DAI → zDAI → DAI)
@@ -71,7 +71,7 @@ Ecosystem Stack:
 
 ## 2. Protocol Architecture
 
-The protocol consists of four core pillars: Privacy Model, State Management, ZRC-20 Standard & Factory, and Privacy Addresses.
+The protocol consists of four core pillars: Privacy Model, State Management, ZRC-20 Standard, and Privacy Addresses.
 
 ### 2.1 Privacy Model
 
@@ -206,14 +206,7 @@ interface IZRC20 {
 - **Privacy**: Amounts, senders, and recipients do not appear in on-chain events
 - **Anti-double-spending**: Each nullifier is unique and can only be used once
 - **Composability**: ZRC-20 maintains ERC-20-like abstraction, enabling integration with DeFi, DAO scenarios
-- **Scalability**: All instances created through factory contracts with unified logic, reducing security risks
-
-### 3.6 Factory Model and ZRC-20 Lifecycle
-
-1. **Token Creation**: Any user deploys new ZRC-20 contract instances through PrivacyTokenFactory
-2. **Minting**: Any user can call `mint`, pay public assets and generate privacy commitments
-3. **Transfer**: Private circulation between users through `transfer`
-4. **Event-driven**: Clients monitor events to update local Merkle Tree and wallet state
+- **Permissionless**: Anyone can implement and deploy ZRC-20 tokens without intermediaries or restrictions
 
 ---
 
@@ -321,19 +314,7 @@ By standardizing the privacy interface, this protocol accelerates ecosystem grow
 
 ---
 
-## 5. Economic Model
-
-The protocol can adopt various economic models depending on deployment scenarios. A reference model includes:
-
-**Token Creation Fee**: A nominal fee to deploy new ZRC-20 tokens through the factory contract, designed to prevent spam deployments while keeping the barrier to entry low.
-
-**Minting Fee (Optional)**: Token creators may optionally configure minting fees for their specific tokens. In fair launch scenarios, a small protocol fee (e.g., 2.5%, configurable) could support ongoing protocol development and maintenance.
-
-*Note: Specific fee structures and percentages are reference values and can be adjusted based on governance decisions or deployment requirements.*
-
----
-
-## 7. Application Scenarios
+## 6. Application Scenarios
 
 The protocol provides a foundation for privacy-preserving applications. Potential use cases include:
 
@@ -355,7 +336,7 @@ The protocol provides a foundation for privacy-preserving applications. Potentia
 
 ---
 
-## 8. Compliance and Regulatory Considerations
+## 7. Compliance and Regulatory Considerations
 
 **Technical Differences from Mixing Protocols**:
 
@@ -375,7 +356,7 @@ The protocol introduces a new paradigm distinct from traditional mixing services
 
 ---
 
-## 9. Performance and Scalability
+## 8. Performance and Scalability
 
 The dual-layer Merkle tree architecture provides fundamental performance advantages over traditional single-tree designs. The key benefits are:
 
@@ -386,7 +367,7 @@ The dual-layer Merkle tree architecture provides fundamental performance advanta
 
 Note: On-chain gas costs remain similar to single-tree designs (~300-400K per transaction), as both architectures perform Merkle verification within zk-SNARK circuits.
 
-### 9.1 Capacity Advantage
+### 8.1 Capacity Advantage
 
 **Architectural Comparison**
 
@@ -407,7 +388,7 @@ For instance, using **16-level subtrees** and a **20-level root tree** (as a ref
 
 *Note: Actual subtree and root tree heights are configurable parameters that can be optimized for specific deployment scenarios.*
 
-### 9.2 Computational Efficiency
+### 8.2 Computational Efficiency
 
 **Proof Generation Performance**
 
@@ -426,7 +407,7 @@ The dual-layer structure directly reduces zero-knowledge proof complexity:
 - **ViewTag filtering**: ~99.6% of irrelevant transactions pre-filtered (255/256 ratio)
 - **Storage optimization**: Clients can prune finalized subtrees while maintaining verification capability
 
-### 9.3 On-Chain Cost Analysis
+### 8.3 On-Chain Cost Analysis
 
 **Gas Cost Composition**
 
@@ -448,11 +429,11 @@ On-chain gas costs are dominated by zk-SNARK proof verification, with minor cont
 - Architecture enables better state management (active vs. historical partitioning)
 - Potential for optimized batching strategies in future versions
 
-### 9.4 Scalability Properties
+### 8.4 Scalability Properties
 
 **Horizontal Scalability**:
 - Each ZRC-20 token maintains independent dual-layer trees
-- Unlimited parallel token deployments through factory model
+- Permissionless parallel token deployments
 - No cross-token state dependencies
 
 **Vertical Scalability**:
@@ -460,7 +441,7 @@ On-chain gas costs are dominated by zk-SNARK proof verification, with minor cont
 - Compatible with L2 rollups for further cost reduction
 - Protocol throughput inherits from the underlying blockchain (L1/L2) performance characteristics
 
-### 9.5 Client Synchronization Efficiency
+### 8.5 Client Synchronization Efficiency
 
 The dual-layer architecture optimizes client-side operations:
 
@@ -482,9 +463,9 @@ The dual-layer architecture optimizes client-side operations:
 
 ---
 
-## 10. Technical Specifications
+## 9. Technical Specifications
 
-### 10.1 Dual-Layer Merkle Tree Architecture
+### 9.1 Dual-Layer Merkle Tree Architecture
 
 **Subtree Layer**:
 - Height: 16 levels
@@ -496,7 +477,7 @@ The dual-layer architecture optimizes client-side operations:
 - Capacity: 1048576 subtrees
 - Purpose: Archive completed subtree roots
 
-### 10.2 Proof System Performance
+### 9.2 Proof System Performance
 
 | Proof Type | Constraint Count | Generation Time | Verification Time | Gas Cost |
 |------------|------------------|-----------------|-------------------|----------|
@@ -505,7 +486,7 @@ The dual-layer architecture optimizes client-side operations:
 | FINALIZED_TRANSFER | ~50K | 3-4s | <100ms | ~450K |
 | ROLLOVER | ~50K | 3-4s | <100ms | ~400K |
 
-### 10.3 PV1 Address Format
+### 9.3 PV1 Address Format
 
 ```
 pv1[N][CompressedData][Checksum]
@@ -518,7 +499,7 @@ pv1[N][CompressedData][Checksum]
 
 The format uses elliptic curve point compression to minimize address length while maintaining security.
 
-### 10.4 Multi-Chain Support
+### 9.4 Multi-Chain Support
 
 The protocol is designed to support multiple EVM-compatible chains through the PV1 address format:
 
@@ -532,16 +513,16 @@ The protocol is designed to support multiple EVM-compatible chains through the P
 
 ---
 
-## 11. Security Analysis
+## 10. Security Analysis
 
-### 11.1 Cryptographic Security
+### 10.1 Cryptographic Security
 
 - **Elliptic Curve**: Baby Jubjub curve compatible with zk-SNARK systems
 - **Hash Function**: Poseidon hash optimized for zero-knowledge proofs
 - **Encryption**: ECDH key exchange + AES-GCM authenticated encryption
 - **Randomness**: Cryptographically secure random number generation
 
-### 11.2 Protocol Security
+### 10.2 Protocol Security
 
 - **Double-spending Prevention**: Nullifier uniqueness enforced by smart contracts
 - **Replay Protection**: Each proof is cryptographically bound to specific inputs
@@ -551,7 +532,7 @@ The protocol is designed to support multiple EVM-compatible chains through the P
 
 ---
 
-## 12. Conclusion and Vision
+## 11. Conclusion and Vision
 
 This protocol, through the ZRC-20 standard, pv1 multi-chain addresses, tiered Merkle trees, and efficient zk-SNARK proofs, constructs a **native privacy asset layer** for the Ethereum ecosystem. It represents not only technical innovation but a paradigm shift in the market: making privacy a fundamental attribute of any digital asset.
 
@@ -576,7 +557,7 @@ We believe that privacy is a necessary condition for Web3 mass adoption. This pr
 
 ---
 
-## 13. Community
+## 12. Community
 
 This document was designed by the **ZKProtocol** team.
 You can get the latest updates about the protocol and contact the team through the following channels:
