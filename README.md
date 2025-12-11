@@ -463,9 +463,11 @@ The dual-layer architecture optimizes client-side operations:
 
 ---
 
-## 9. Technical Specifications
+## 9. Recommended Technical Specifications
 
-### 9.1 Dual-Layer Merkle Tree Architecture
+**Note**: The following specifications represent a **recommended reference implementation** using a dual-layer Merkle tree architecture. As a foundational interface standard, the ZRC-20 protocol **does not mandate** specific implementation details. Developers are free to implement alternative architectures (e.g., single-tree, accumulator-based, or other cryptographic structures) as long as they conform to the IZRC20 interface.
+
+### 9.1 Dual-Layer Merkle Tree Architecture (Recommended)
 
 **Subtree Layer**:
 - Height: 16 levels
